@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:process_run/shell.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 void main() {
   runApp(const MaterialApp(home: Home(), debugShowCheckedModeBanner: false));
@@ -14,8 +15,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  String buttonText = "Connect";
+  String connectButtonText = "Connect";
+  String resetADBButtonText = "Reset ADB";
   Color buttonColor = Colors.purple;
+  double loadingCircleSize = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -31,25 +34,37 @@ class _HomeState extends State<Home> {
                     await runConsoleCommand("adb connect 192.168.1.40:5555");
                 if (result.contains("connected")) {
                   setState(() {
-                    buttonText = "Connected";
+                    connectButtonText = "Connected";
                     buttonColor = Colors.green;
                   });
                 }
               },
-              child: Text(buttonText, style: myTextStyle()),
+              child: Text(connectButtonText, style: myTextStyle()),
               style: myButtonStyle(buttonColor: buttonColor),
             ),
             const SizedBox(height: 10.0),
             TextButton(
               onPressed: () async {
+                setState(() {
+                  resetADBButtonText = "";
+                  loadingCircleSize = 25.0;
+                });
                 await runConsoleCommand("adb kill-server");
                 await runConsoleCommand("adb start-server");
                 setState(() {
-                  buttonText = "Connect";
+                  connectButtonText = "Connect";
                   buttonColor = Colors.purple;
+                  resetADBButtonText = "Reset ADB";
+                  loadingCircleSize = 0.0;
                 });
               },
-              child: Text("Reset ADB", style: myTextStyle()),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(resetADBButtonText, style: myTextStyle()),
+                  SpinKitFadingCircle(color: Colors.black54, size: loadingCircleSize),
+                ],
+              ),
               style: myButtonStyle(),
             )
           ],
