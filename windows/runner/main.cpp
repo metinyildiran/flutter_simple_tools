@@ -1,6 +1,6 @@
+#include <windows.h>
 #include <flutter/dart_project.h>
 #include <flutter/flutter_view_controller.h>
-#include <windows.h>
 
 #include "flutter_window.h"
 #include "utils.h"
@@ -12,11 +12,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   if (!::AttachConsole(ATTACH_PARENT_PROCESS) && ::IsDebuggerPresent()) {
     CreateAndAttachConsole();
   }
-
+  
   // Initialize COM, so that it is available for use in the library and/or
   // plugins.
   ::CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-
+  
   flutter::DartProject project(L"data");
 
   std::vector<std::string> command_line_arguments =
