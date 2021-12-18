@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:process_run/shell.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -11,10 +12,43 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  String ipAddress = "";
   String connectButtonText = "Connect";
   String resetADBButtonText = "Reset ADB";
   Color buttonColor = Colors.purple;
-  double loadingCircleSize = 0.0;
+  double resetButtonLoadingCircleSize = 0.0;
+  double connectButtonLoadingCircleSize = 0.0;
+
+  getIPAddress() async {
+    ipAddress = await getDataFromPref("IP");
+  }
+
+  initialSetup() async {
+    setState(() {
+      connectButtonLoadingCircleSize = 25.0;
+      connectButtonText = "";
+    });
+    String _result = await runConsoleCommand("adb devices");
+    String _ip = await getDataFromPref("IP");
+
+    setState(() {
+      connectButtonLoadingCircleSize = 0.0;
+      connectButtonText = "Connect";
+    });
+
+    if(_result.contains(_ip)){
+      setState(() {
+        connectButtonText = "Connected";
+        buttonColor = Colors.green;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    initialSetup();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,26 +64,64 @@ class _MainPageState extends State<MainPage> {
                 },
                 icon: const Icon(IconData(0xe57f, fontFamily: 'MaterialIcons'),
                     color: Colors.grey)),
+            // Connect Button
             TextButton(
               onPressed: () async {
+                setState(() {
+                  buttonColor = Colors.purple;
+                  connectButtonText = "";
+                  connectButtonLoadingCircleSize = 25.0;
+                });
+                await getIPAddress();
                 String result =
-                await runConsoleCommand("adb connect 192.168.1.40:5555");
-                if (result.contains("connected")) {
+                    await runConsoleCommand("adb connect $ipAddress:5555");
+                connectButtonLoadingCircleSize = 0.0;
+                if (result.contains("connected to")) {
                   setState(() {
                     connectButtonText = "Connected";
                     buttonColor = Colors.green;
                   });
+                } else if (result.contains("No such host is known")) {
+                  setState(() {
+                    connectButtonText = "No Device";
+                    buttonColor = Colors.red;
+                  });
+                } else if (result
+                    .contains("the target machine actively refused it")) {
+                  setState(() {
+                    connectButtonText = "Couldn't Connect";
+                    buttonColor = Colors.yellow;
+                  });
+                } else if (result.contains("A connection attempt failed")) {
+                  setState(() {
+                    connectButtonText = "Couldn't Connect";
+                    buttonColor = Colors.yellow;
+                  });
+                } else if (result.contains("no host in")) {
+                  setState(() {
+                    connectButtonText = "No Device";
+                    buttonColor = Colors.red;
+                  });
                 }
               },
-              child: Text(connectButtonText, style: myTextStyle()),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Text(connectButtonText, style: myTextStyle()),
+                  SpinKitFadingCircle(
+                      color: Colors.black54,
+                      size: connectButtonLoadingCircleSize)
+                ],
+              ),
               style: myButtonStyle(buttonColor: buttonColor),
             ),
             const SizedBox(height: 10.0),
+            // Reset Button
             TextButton(
               onPressed: () async {
                 setState(() {
                   resetADBButtonText = "";
-                  loadingCircleSize = 25.0;
+                  resetButtonLoadingCircleSize = 25.0;
                 });
                 await runConsoleCommand("adb kill-server");
                 await runConsoleCommand("adb start-server");
@@ -57,7 +129,8 @@ class _MainPageState extends State<MainPage> {
                   connectButtonText = "Connect";
                   buttonColor = Colors.purple;
                   resetADBButtonText = "Reset ADB";
-                  loadingCircleSize = 0.0;
+                  resetButtonLoadingCircleSize = 0.0;
+                  connectButtonLoadingCircleSize = 0.0;
                 });
               },
               child: Stack(
@@ -65,7 +138,8 @@ class _MainPageState extends State<MainPage> {
                 children: [
                   Text(resetADBButtonText, style: myTextStyle()),
                   SpinKitFadingCircle(
-                      color: Colors.black54, size: loadingCircleSize),
+                      color: Colors.black54,
+                      size: resetButtonLoadingCircleSize),
                 ],
               ),
               style: myButtonStyle(),
@@ -95,4 +169,14 @@ ButtonStyle myButtonStyle({Color buttonColor = Colors.purple}) {
 
 TextStyle myTextStyle() {
   return const TextStyle(color: Colors.black54, fontWeight: FontWeight.w700);
+}
+
+Future<String> getDataFromPref(String key) async {
+  final prefs = await SharedPreferences.getInstance();
+  return prefs.getString(key)!;
+}
+
+void setDataWithPref(String key, String value) async {
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setString(key, value);
 }
