@@ -20,7 +20,7 @@ class _MainPageState extends State<MainPage> {
   double connectButtonLoadingCircleSize = 0.0;
 
   getIPAddress() async {
-    ipAddress = await getDataFromPref("IP");
+    ipAddress = await getDataFromPref("IP") as String;
   }
 
   initialSetup() async {
@@ -29,7 +29,7 @@ class _MainPageState extends State<MainPage> {
       connectButtonText = "";
     });
     String _result = await runConsoleCommand("adb devices");
-    String _ip = await getDataFromPref("IP");
+    String _ip = await getDataFromPref("IP") as String;
 
     setState(() {
       connectButtonLoadingCircleSize = 0.0;
@@ -81,6 +81,11 @@ class _MainPageState extends State<MainPage> {
                     connectButtonText = "Connected";
                     buttonColor = Colors.green;
                   });
+
+                  if(await getDataFromPref("quitOnConnect") as bool){
+                    await Future.delayed(const Duration(milliseconds: 1000));
+                    exit(0);
+                  }
                 } else if (result.contains("No such host is known")) {
                   setState(() {
                     connectButtonText = "No Device";
@@ -171,9 +176,9 @@ TextStyle myTextStyle() {
   return const TextStyle(color: Colors.black54, fontWeight: FontWeight.w700);
 }
 
-Future<String> getDataFromPref(String key) async {
+Future<Object> getDataFromPref(String key) async {
   final prefs = await SharedPreferences.getInstance();
-  return prefs.getString(key)!;
+  return prefs.get(key)!;
 }
 
 void setDataWithPref(String key, String value) async {

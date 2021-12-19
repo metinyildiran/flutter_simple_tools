@@ -11,6 +11,7 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   String ipAddress = "";
+  bool? quitOnConnect = false;
 
   final textEditingController = TextEditingController();
 
@@ -19,6 +20,9 @@ class _SettingsState extends State<Settings> {
     ipAddress = prefs.getString("IP")!;
 
     textEditingController.text = ipAddress;
+    setState(() {
+      quitOnConnect = prefs.getBool("quitOnConnect") ?? false;
+    });
   }
 
   @override
@@ -30,6 +34,7 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(40.0),
           child: AppBar(
@@ -39,16 +44,37 @@ class _SettingsState extends State<Settings> {
       body: Column(
         children: [
           TextField(
+            style: const TextStyle(color: Colors.white),
             onChanged: (text) async {
               final prefs = await SharedPreferences.getInstance();
               prefs.setString("IP", text);
             },
             controller: textEditingController,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
-              ],
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(hintText: "IP Address"))
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+            ],
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                ),
+                hintText: "IP Address"),
+          ),
+          Row(
+            children: [
+              const Text("Quit On Connect",
+                  style: TextStyle(color: Colors.white)),
+              Checkbox(
+                  value: quitOnConnect,
+                  onChanged: (newValue) async {
+                    final prefs = await SharedPreferences.getInstance();
+                    prefs.setBool("quitOnConnect", newValue!);
+                    setState(() {
+                      quitOnConnect = newValue;
+                    });
+                  }),
+            ],
+          )
         ],
       ),
     );
@@ -60,5 +86,3 @@ class _SettingsState extends State<Settings> {
     super.initState();
   }
 }
-
-
