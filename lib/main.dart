@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:simple_tools/pages/main_page.dart';
-import 'package:simple_tools/pages/settings.dart';
+import 'package:simple_tools/screens/main_page.dart';
+import 'package:simple_tools/screens/settings.dart';
 
 void main() {
   runApp(MaterialApp(

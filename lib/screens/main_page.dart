@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:process_run/shell.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_tools/widgets/my_button.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -58,6 +59,7 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            MyButton(onPressed: () {}),
             IconButton(
                 onPressed: () {
                   Navigator.pushNamed(context, "/settings");
