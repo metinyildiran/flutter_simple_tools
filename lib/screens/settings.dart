@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:simple_tools/util/preference_utils.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -11,17 +11,16 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   String ipAddress = "";
-  bool? quitOnConnect = false;
+  bool quitOnConnect = false;
 
   final textEditingController = TextEditingController();
 
-  initPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-    ipAddress = prefs.getString("IP")!;
+  initialSetup() async {
+    ipAddress = PreferenceUtils.getString("IP");
 
     textEditingController.text = ipAddress;
     setState(() {
-      quitOnConnect = prefs.getBool("quitOnConnect") ?? false;
+      quitOnConnect = PreferenceUtils.getBool("quitOnConnect");
     });
   }
 
@@ -45,9 +44,8 @@ class _SettingsState extends State<Settings> {
         children: [
           TextField(
             style: const TextStyle(color: Colors.white),
-            onChanged: (text) async {
-              final prefs = await SharedPreferences.getInstance();
-              prefs.setString("IP", text);
+            onChanged: (text) {
+              PreferenceUtils.setString("IP", text);
             },
             controller: textEditingController,
             inputFormatters: [
@@ -66,9 +64,8 @@ class _SettingsState extends State<Settings> {
                   style: TextStyle(color: Colors.white)),
               Checkbox(
                   value: quitOnConnect,
-                  onChanged: (newValue) async {
-                    final prefs = await SharedPreferences.getInstance();
-                    prefs.setBool("quitOnConnect", newValue!);
+                  onChanged: (newValue) {
+                      PreferenceUtils.setBool("quitOnConnect", newValue!);
                     setState(() {
                       quitOnConnect = newValue;
                     });
@@ -82,7 +79,8 @@ class _SettingsState extends State<Settings> {
 
   @override
   void initState() {
-    initPrefs();
+    initialSetup();
+    PreferenceUtils.init();
     super.initState();
   }
 }
