@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:process_run/shell.dart';
 import 'package:simple_tools/widgets/status_button.dart';
 import '../util/preference_utils.dart';
 
@@ -64,6 +63,7 @@ class _MainPageState extends State<MainPage> {
                 ipAddress = PreferenceUtils.getString("IP");
                 String result =
                     await runConsoleCommand("adb connect $ipAddress:5555");
+                print(result);
                 if (result.contains("connected to")) {
                   setState(() {
                     connectButtonStatus = ButtonStatus.CONNECTED;
@@ -120,12 +120,10 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-Future<String> runConsoleCommand(String command) async {
+Future<String> runConsoleCommand(String command)  async {
   if (Platform.isWindows) {
-    var shell = Shell();
-    List<ProcessResult> result = await shell.run(command);
-    String outResult = result.first.outText;
-    return outResult;
+    var process = await Process.run(command, [], runInShell: true);
+    return process.stdout;
   }
   return "";
 }
