@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:simple_tools/util/utils.dart';
 import 'package:simple_tools/widgets/status_button.dart';
 import '../util/preference_utils.dart';
 
@@ -15,15 +15,13 @@ class _MainPageState extends State<MainPage> {
   String ipAddress = "";
   ButtonStatus connectButtonStatus = ButtonStatus.DEFAULT;
   ButtonStatus resetButtonStatus = ButtonStatus.DEFAULT;
-  ButtonStatus downloadButtonStatus = ButtonStatus.DEFAULT;
-  String downloadButtonText = "Download";
 
   initialSetup() async {
     setState(() {
       connectButtonStatus = ButtonStatus.BUSY;
     });
     String _result = "";
-    Stream _stream = await runConsoleCommand("adb devices");
+    Stream _stream = await Utils.runConsoleCommand("adb devices");
     _stream.listen((data) {
       _result = data;
     });
@@ -54,27 +52,6 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            StatusButton(
-                onPressed: () async {
-                  setState(() {
-                    // downloadButtonStatus = ButtonStatus.BUSY;
-                  });
-                  String _result = "";
-                  Stream _stream = await runConsoleCommand(
-                      "youtube-dl https://www.youtube.com/watch?v=_tV5LEBDs7w");
-                  _stream.listen((data) {
-                    if(data.toString().contains("%")){
-                      _result = data.substring(11, data.indexOf("%")).trim();
-                      setState(() {
-                        downloadButtonText = _result;
-                      });
-                    }
-                  });
-                  print(_result);
-                },
-                status: MyButtonStatus(
-                    text: downloadButtonText,
-                    buttonStatus: downloadButtonStatus)),
             // Settings Button
             IconButton(
                 onPressed: () {
@@ -89,8 +66,8 @@ class _MainPageState extends State<MainPage> {
                   connectButtonStatus = ButtonStatus.BUSY;
                 });
                 ipAddress = PreferenceUtils.getString("IP");
-                Stream _stream =
-                    await runConsoleCommand("adb connect $ipAddress:5555");
+                Stream _stream = await Utils.runConsoleCommand(
+                    "adb connect $ipAddress:5555");
                 _stream.listen((result) async {
                   print(result);
                   if (result.contains("connected to")) {
@@ -125,7 +102,6 @@ class _MainPageState extends State<MainPage> {
               status: MyButtonStatus(
                   text: "Connect", buttonStatus: connectButtonStatus),
             ),
-            const SizedBox(height: 10.0),
             // Reset Button
             StatusButton(
               onPressed: () async {
@@ -133,37 +109,27 @@ class _MainPageState extends State<MainPage> {
                   connectButtonStatus = ButtonStatus.BUSY;
                   resetButtonStatus = ButtonStatus.BUSY;
                 });
-                await runConsoleCommand("adb kill-server");
-                await runConsoleCommand("adb start-server");
+                await Utils.runConsoleCommand("adb kill-server");
+                await Utils.runConsoleCommand("adb start-server");
                 setState(() {
                   connectButtonStatus = ButtonStatus.DEFAULT;
                   resetButtonStatus = ButtonStatus.DEFAULT;
                 });
               },
               status: MyButtonStatus(
-                  text: "Reset", buttonStatus: resetButtonStatus),
-            )
+                  text: "Reset ADB", buttonStatus: resetButtonStatus),
+            ),
+            // Download Button
+            StatusButton(
+                onPressed: () async {
+                  Navigator.pushNamed(context, "/download_video");
+                },
+                status: MyButtonStatus(
+                    text: "Download Video",
+                    buttonStatus: ButtonStatus.DEFAULT)),
           ],
         ),
       ),
     );
   }
-}
-
-Future<Stream> runConsoleCommand(String command) async {
-  if (Platform.isWindows) {
-    var process = await Process.start(command, [], runInShell: true);
-    return process.stdout.transform(utf8.decoder);
-  }
-  return const Stream.empty();
-}
-
-ButtonStyle myButtonStyle({Color buttonColor = Colors.purple}) {
-  return ButtonStyle(
-      fixedSize: MaterialStateProperty.all(const Size(150, 40)),
-      backgroundColor: MaterialStateProperty.all(buttonColor));
-}
-
-TextStyle myTextStyle() {
-  return const TextStyle(color: Colors.black54, fontWeight: FontWeight.w700);
 }

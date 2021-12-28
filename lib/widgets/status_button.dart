@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -12,24 +14,35 @@ class StatusButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 200.0,
-      height: 40.0,
-      child: ElevatedButton(
-        style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all(status.buttonColor)),
-        child: Stack(alignment: Alignment.center, children: [
-          Text(
-            status.text,
-            maxLines: 1,
-            style: const TextStyle(
-                color: Colors.black54, fontWeight: FontWeight.w700),
-          ),
-          SpinKitFadingCircle(
-              color: Colors.black54, size: status.loadingCircleSize)
-        ]),
-        onPressed: onPressed,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const SizedBox(height: 5.0),
+        SizedBox(
+            width: 200.0,
+            height: 40.0,
+            child: Stack(children: [
+              ElevatedButton(
+                onPressed: onPressed,
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(status.buttonColor)),
+                child: Stack(children: [
+                  SpinKitFadingCircle(
+                      color: Colors.black54, size: status.loadingCircleSize),
+                  Center(
+                    child: Text(
+                      status.text,
+                      maxLines: 1,
+                      style: const TextStyle(
+                          color: Colors.black54, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                ]),
+              )
+            ])),
+        const SizedBox(height: 5.0)
+      ],
     );
   }
 }
