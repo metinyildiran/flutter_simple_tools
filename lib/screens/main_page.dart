@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:simple_tools/widgets/status_button.dart';
@@ -14,12 +15,18 @@ class _MainPageState extends State<MainPage> {
   String ipAddress = "";
   ButtonStatus connectButtonStatus = ButtonStatus.DEFAULT;
   ButtonStatus resetButtonStatus = ButtonStatus.DEFAULT;
+  ButtonStatus downloadButtonStatus = ButtonStatus.DEFAULT;
+  String downloadButtonText = "Download";
 
   initialSetup() async {
     setState(() {
       connectButtonStatus = ButtonStatus.BUSY;
     });
-    String _result = await runConsoleCommand("adb devices");
+    String _result = "";
+    Stream _stream = await runConsoleCommand("adb devices");
+    _stream.listen((data) {
+      _result = data;
+    });
 
     setState(() {
       connectButtonStatus = ButtonStatus.DEFAULT;
@@ -47,6 +54,27 @@ class _MainPageState extends State<MainPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            StatusButton(
+                onPressed: () async {
+                  setState(() {
+                    // downloadButtonStatus = ButtonStatus.BUSY;
+                  });
+                  String _result = "";
+                  Stream _stream = await runConsoleCommand(
+                      "youtube-dl https://www.youtube.com/watch?v=_tV5LEBDs7w");
+                  _stream.listen((data) {
+                    if(data.toString().contains("%")){
+                      _result = data.substring(11, data.indexOf("%")).trim();
+                      setState(() {
+                        downloadButtonText = _result;
+                      });
+                    }
+                  });
+                  print(_result);
+                },
+                status: MyButtonStatus(
+                    text: downloadButtonText,
+                    buttonStatus: downloadButtonStatus)),
             // Settings Button
             IconButton(
                 onPressed: () {
@@ -61,36 +89,38 @@ class _MainPageState extends State<MainPage> {
                   connectButtonStatus = ButtonStatus.BUSY;
                 });
                 ipAddress = PreferenceUtils.getString("IP");
-                String result =
+                Stream _stream =
                     await runConsoleCommand("adb connect $ipAddress:5555");
-                print(result);
-                if (result.contains("connected to")) {
-                  setState(() {
-                    connectButtonStatus = ButtonStatus.CONNECTED;
-                  });
+                _stream.listen((result) async {
+                  print(result);
+                  if (result.contains("connected to")) {
+                    setState(() {
+                      connectButtonStatus = ButtonStatus.CONNECTED;
+                    });
 
-                  if (PreferenceUtils.getBool("quitOnConnect")) {
-                    await Future.delayed(const Duration(milliseconds: 1000));
-                    exit(0);
+                    if (PreferenceUtils.getBool("quitOnConnect")) {
+                      await Future.delayed(const Duration(milliseconds: 1000));
+                      exit(0);
+                    }
+                  } else if (result.contains("No such host is known")) {
+                    setState(() {
+                      connectButtonStatus = ButtonStatus.ERROR;
+                    });
+                  } else if (result
+                      .contains("the target machine actively refused it")) {
+                    setState(() {
+                      connectButtonStatus = ButtonStatus.WARNING;
+                    });
+                  } else if (result.contains("A connection attempt failed")) {
+                    setState(() {
+                      connectButtonStatus = ButtonStatus.WARNING;
+                    });
+                  } else if (result.contains("no host in")) {
+                    setState(() {
+                      connectButtonStatus = ButtonStatus.ERROR;
+                    });
                   }
-                } else if (result.contains("No such host is known")) {
-                  setState(() {
-                    connectButtonStatus = ButtonStatus.ERROR;
-                  });
-                } else if (result
-                    .contains("the target machine actively refused it")) {
-                  setState(() {
-                    connectButtonStatus = ButtonStatus.WARNING;
-                  });
-                } else if (result.contains("A connection attempt failed")) {
-                  setState(() {
-                    connectButtonStatus = ButtonStatus.WARNING;
-                  });
-                } else if (result.contains("no host in")) {
-                  setState(() {
-                    connectButtonStatus = ButtonStatus.ERROR;
-                  });
-                }
+                });
               },
               status: MyButtonStatus(
                   text: "Connect", buttonStatus: connectButtonStatus),
@@ -120,12 +150,12 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
-Future<String> runConsoleCommand(String command)  async {
+Future<Stream> runConsoleCommand(String command) async {
   if (Platform.isWindows) {
-    var process = await Process.run(command, [], runInShell: true);
-    return process.stdout;
+    var process = await Process.start(command, [], runInShell: true);
+    return process.stdout.transform(utf8.decoder);
   }
-  return "";
+  return const Stream.empty();
 }
 
 ButtonStyle myButtonStyle({Color buttonColor = Colors.purple}) {
