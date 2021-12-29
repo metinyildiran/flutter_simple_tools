@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:simple_tools/util/preference_utils.dart';
+import 'package:simple_tools/util/utils.dart';
+import 'package:simple_tools/widgets/my_text_field.dart';
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -10,24 +11,14 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-  String ipAddress = "";
   bool quitOnConnect = false;
-
-  final textEditingController = TextEditingController();
+  TextEditingController ipTextEditingController = TextEditingController();
 
   initialSetup() async {
-    ipAddress = PreferenceUtils.getString("IP");
-
-    textEditingController.text = ipAddress;
     setState(() {
+      ipTextEditingController.text = PreferenceUtils.getString("IP");
       quitOnConnect = PreferenceUtils.getBool("quitOnConnect");
     });
-  }
-
-  @override
-  void dispose() {
-    textEditingController.dispose();
-    super.dispose();
   }
 
   @override
@@ -42,22 +33,9 @@ class _SettingsState extends State<Settings> {
           )),
       body: Column(
         children: [
-          TextField(
-            style: const TextStyle(color: Colors.white),
-            onChanged: (text) {
-              PreferenceUtils.setString("IP", text);
-            },
-            controller: textEditingController,
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
-            ],
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                hintText: "IP Address"),
-          ),
+          MyTextField(onChanged: (text) {
+            PreferenceUtils.setString("IP", text);
+          }, regExp: r'[0-9.]', hintText: 'IP Address', textEditingController: ipTextEditingController),
           Row(
             children: [
               const Text("Quit On Connect",
