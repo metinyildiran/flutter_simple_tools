@@ -20,21 +20,20 @@ class _MainPageState extends State<MainPage> {
     setState(() {
       connectButtonStatus = ButtonStatus.BUSY;
     });
-    String _result = "";
+
     Stream _stream = await Utils.runConsoleCommand("adb devices");
     _stream.listen((data) {
-      _result = data;
+      print('data: $data');
+      if (data.contains(PreferenceUtils.getString("IP"))) {
+        setState(() {
+          connectButtonStatus = ButtonStatus.CONNECTED;
+        });
+      }
     });
 
     setState(() {
       connectButtonStatus = ButtonStatus.DEFAULT;
     });
-
-    if (_result.contains(PreferenceUtils.getString("IP"))) {
-      setState(() {
-        connectButtonStatus = ButtonStatus.CONNECTED;
-      });
-    }
   }
 
   @override
