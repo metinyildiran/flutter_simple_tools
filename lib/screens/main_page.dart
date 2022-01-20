@@ -49,15 +49,18 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: Colors.grey[900],
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Settings Button
-            IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "/settings");
-                },
-                icon: const Icon(IconData(0xe57f, fontFamily: 'MaterialIcons'),
-                    color: Colors.grey)),
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/settings");
+                  },
+                  icon: const Icon(IconData(0xe57f, fontFamily: 'MaterialIcons'),
+                      color: Colors.grey)),
+            ),
             // Connect Button
             StatusButton(
               onPressed: () async {

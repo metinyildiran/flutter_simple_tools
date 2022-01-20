@@ -44,7 +44,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
 
   FlutterWindow window(project);
   Win32Window::Point origin(1250, 550);
-  Win32Window::Size size(270, 260);
+  Win32Window::Size size(270, 250);
   if (!window.CreateAndShow(L"Simple Tools", origin, size)) {
     return EXIT_FAILURE;
   }
