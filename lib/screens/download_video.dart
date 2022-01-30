@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:simple_tools/widgets/status_button.dart';
 import '../util/utils.dart';
@@ -30,7 +29,6 @@ class _DownloadVideoState extends State<DownloadVideo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(40.0),
           child: AppBar(
@@ -73,7 +71,9 @@ class _DownloadVideoState extends State<DownloadVideo> {
                         });
                       }
                     }
-                    if (data.toString().contains("has already been downloaded")) {
+                    if (data
+                        .toString()
+                        .contains("has already been downloaded")) {
                       setState(() {
                         downloadButtonText = "File Exists";
                       });
@@ -86,7 +86,6 @@ class _DownloadVideoState extends State<DownloadVideo> {
                     }
                     print(data);
                   });
-
                 }
               },
               status: MyButtonStatus(

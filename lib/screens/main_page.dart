@@ -46,7 +46,6 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[900],
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
