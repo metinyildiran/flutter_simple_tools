@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:simple_tools/theme/custom_colors.dart';
 import 'package:simple_tools/util/utils.dart';
 import 'package:simple_tools/widgets/status_button.dart';
 import '../util/preference_utils.dart';
@@ -46,6 +47,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CustomColors.darkGrey,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -57,7 +59,8 @@ class _MainPageState extends State<MainPage> {
                   onPressed: () {
                     Navigator.pushNamed(context, "/settings");
                   },
-                  icon: const Icon(IconData(0xe57f, fontFamily: 'MaterialIcons'),
+                  icon: const Icon(
+                      IconData(0xe57f, fontFamily: 'MaterialIcons'),
                       color: Colors.grey)),
             ),
             // Connect Button
@@ -128,6 +131,12 @@ class _MainPageState extends State<MainPage> {
                 status: MyButtonStatus(
                     text: "Download Video",
                     buttonStatus: ButtonStatus.DEFAULT)),
+            StatusButton(
+                onPressed: () async {
+                  Navigator.pushNamed(context, "/text_tools");
+                },
+                status: MyButtonStatus(
+                    text: "Text Tools", buttonStatus: ButtonStatus.DEFAULT))
           ],
         ),
       ),

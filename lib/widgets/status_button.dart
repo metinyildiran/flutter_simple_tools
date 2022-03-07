@@ -24,9 +24,9 @@ class StatusButton extends StatelessWidget {
             child: Stack(children: [
               ElevatedButton(
                 onPressed: onPressed,
-                // style: ButtonStyle(
-                //     backgroundColor:
-                //         MaterialStateProperty.all(status.buttonColor)),
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateProperty.all(status.buttonColor)),
                 child: Stack(children: [
                   SpinKitFadingCircle(
                       color: Colors.black54, size: status.loadingCircleSize),
@@ -34,8 +34,8 @@ class StatusButton extends StatelessWidget {
                     child: Text(
                       status.text,
                       maxLines: 1,
-                      // style: const TextStyle(
-                      //     color: Colors.black54, fontWeight: FontWeight.w700),
+                      style: const TextStyle(
+                          color: Colors.black54, fontWeight: FontWeight.w700),
                     ),
                   ),
                 ]),

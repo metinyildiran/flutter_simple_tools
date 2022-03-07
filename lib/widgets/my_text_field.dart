@@ -25,7 +25,7 @@ class MyTextField extends StatelessWidget {
       controller: textEditingController,
       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(regExp))],
       keyboardType: inputType,
-      maxLines: null,
+      maxLines: 1,
       decoration: InputDecoration(
           enabledBorder: const UnderlineInputBorder(
             borderSide: BorderSide(color: Colors.white),

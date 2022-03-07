@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:simple_tools/theme/custom_colors.dart';
 import 'package:simple_tools/widgets/status_button.dart';
 import '../util/utils.dart';
 import '../widgets/my_text_field.dart';
@@ -29,6 +30,7 @@ class _DownloadVideoState extends State<DownloadVideo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CustomColors.darkGrey,
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(40.0),
           child: AppBar(
