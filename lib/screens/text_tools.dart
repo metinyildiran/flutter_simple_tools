@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:simple_tools/theme/custom_colors.dart';
 import 'package:simple_tools/widgets/my_text_field.dart';
+import 'package:simple_tools/widgets/status_button.dart';
 
 class TextTools extends StatefulWidget {
   const TextTools({Key? key}) : super(key: key);
@@ -36,7 +37,6 @@ class _TextToolsState extends State<TextTools> {
                       return;
                     }
                     capitalizedText = textEditingController.text.toUpperCase();
-                    Clipboard.setData(ClipboardData(text: capitalizedText));
                   });
                 });
               },
@@ -44,10 +44,17 @@ class _TextToolsState extends State<TextTools> {
               textEditingController: textEditingController,
               hintText: "Enter the text"),
           const SizedBox(height: 5),
-          const Text("Text will be automatically copied",
-              style: TextStyle(color: Colors.grey)),
           const SizedBox(height: 10),
-          Text(capitalizedText, style: const TextStyle(color: Colors.grey))
+          Text(capitalizedText, style: const TextStyle(color: Colors.grey)),
+          StatusButton(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: capitalizedText));
+                setState(() {
+                  textEditingController.text = "";
+                });
+              },
+              status: MyButtonStatus(
+                  text: "Copy", buttonStatus: ButtonStatus.DEFAULT))
         ],
       ),
     );
