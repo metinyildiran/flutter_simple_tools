@@ -43,8 +43,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   project.set_dart_entrypoint_arguments(std::move(command_line_arguments));
 
   FlutterWindow window(project);
-  Win32Window::Point origin(1250, 510);
-  Win32Window::Size size(270, 290);
+  Win32Window::Point origin(1250, 470);
+  Win32Window::Size size(270, 330);
   if (!window.CreateAndShow(L"Simple Tools", origin, size)) {
     return EXIT_FAILURE;
   }

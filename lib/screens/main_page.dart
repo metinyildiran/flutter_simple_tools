@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:simple_tools/theme/custom_colors.dart';
 import 'package:simple_tools/util/utils.dart';
@@ -50,19 +51,8 @@ class _MainPageState extends State<MainPage> {
       backgroundColor: CustomColors.darkGrey,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Settings Button
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, "/settings");
-                  },
-                  icon: const Icon(
-                      IconData(0xe57f, fontFamily: 'MaterialIcons'),
-                      color: Colors.grey)),
-            ),
             // Connect Button
             StatusButton(
               onPressed: () async {
@@ -136,7 +126,13 @@ class _MainPageState extends State<MainPage> {
                   Navigator.pushNamed(context, "/text_tools");
                 },
                 status: MyButtonStatus(
-                    text: "Text Tools", buttonStatus: ButtonStatus.DEFAULT))
+                    text: "Text Tools", buttonStatus: ButtonStatus.DEFAULT)),
+            StatusButton(
+                onPressed: () async {
+                  Navigator.pushNamed(context, "/settings");
+                },
+                status: MyButtonStatus(
+                    text: "Settings", buttonStatus: ButtonStatus.DEFAULT))
           ],
         ),
       ),
