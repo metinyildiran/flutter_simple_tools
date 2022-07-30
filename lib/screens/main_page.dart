@@ -16,6 +16,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   String ipAddress = "";
   ButtonStatus connectButtonStatus = ButtonStatus.DEFAULT;
+  ButtonStatus setupButtonStatus = ButtonStatus.DEFAULT;
   ButtonStatus resetButtonStatus = ButtonStatus.DEFAULT;
 
   initialSetup() async {
@@ -96,6 +97,18 @@ class _MainPageState extends State<MainPage> {
               status: MyButtonStatus(
                   text: "Connect", buttonStatus: connectButtonStatus),
             ),
+            // Setup Button
+            StatusButton(onPressed: () async {
+              setState(() {
+                connectButtonStatus = ButtonStatus.BUSY;
+                setupButtonStatus = ButtonStatus.BUSY;
+              });
+              await Utils.runConsoleCommand("adb tcpip 5555");
+              setState(() {
+                connectButtonStatus = ButtonStatus.DEFAULT;
+                setupButtonStatus = ButtonStatus.DEFAULT;
+              });
+            }, status: MyButtonStatus(text: "Setup ADB", buttonStatus: setupButtonStatus)),
             // Reset Button
             StatusButton(
               onPressed: () async {

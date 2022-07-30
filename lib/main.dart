@@ -3,7 +3,6 @@ import 'package:simple_tools/screens/download_video.dart';
 import 'package:simple_tools/screens/main_page.dart';
 import 'package:simple_tools/screens/settings.dart';
 import 'package:simple_tools/screens/text_tools.dart';
-import 'package:simple_tools/theme/custom_theme.dart';
 
 void main() {
   runApp(MaterialApp(
