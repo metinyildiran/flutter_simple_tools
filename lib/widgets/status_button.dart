@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:simple_tools/theme/custom_theme.dart';
 
 enum ButtonStatus { DEFAULT, BUSY, CONNECTED, WARNING, ERROR }
 
@@ -24,18 +21,17 @@ class StatusButton extends StatelessWidget {
             child: Stack(children: [
               ElevatedButton(
                 onPressed: onPressed,
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(status.buttonColor)),
-                child: Stack(children: [
-                  SpinKitFadingCircle(
-                      color: Colors.black54, size: status.loadingCircleSize),
+                child: Stack(alignment: Alignment.center, children: [
+                  if (status.isBusy)
+                    const SizedBox(
+                        width: 20.0,
+                        height: 20.0,
+                        child: CircularProgressIndicator(strokeWidth: 2.0)),
                   Center(
                     child: Text(
                       status.text,
                       maxLines: 1,
-                      style: const TextStyle(
-                          color: Colors.black54, fontWeight: FontWeight.w700),
+                      style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                   ),
                 ]),
@@ -49,29 +45,24 @@ class StatusButton extends StatelessWidget {
 
 class MyButtonStatus {
   String text;
-  Color buttonColor;
-  double loadingCircleSize;
+  bool isBusy;
   ButtonStatus buttonStatus;
 
   MyButtonStatus(
       {this.text = "Status Button",
-      this.buttonColor = Colors.purple,
-      this.loadingCircleSize = 0.0,
+      this.isBusy = false,
       required this.buttonStatus}) {
     if (buttonStatus == ButtonStatus.DEFAULT) {
-      loadingCircleSize = 0.0;
+      isBusy = false;
     } else if (buttonStatus == ButtonStatus.BUSY) {
       text = "";
-      loadingCircleSize = 25.0;
+      isBusy = true;
     } else if (buttonStatus == ButtonStatus.CONNECTED) {
       text = "Connected";
-      buttonColor = Colors.green;
     } else if (buttonStatus == ButtonStatus.WARNING) {
       text = "Couldn't connect";
-      buttonColor = Colors.yellow;
     } else if (buttonStatus == ButtonStatus.ERROR) {
       text = "No device";
-      buttonColor = Colors.red;
     }
   }
 }

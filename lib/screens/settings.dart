@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:simple_tools/theme/custom_colors.dart';
 import 'package:simple_tools/util/preference_utils.dart';
 import 'package:simple_tools/widgets/my_text_field.dart';
 
@@ -24,7 +23,6 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColors.darkGrey,
       appBar: PreferredSize(
           preferredSize: const Size.fromHeight(40.0),
           child: AppBar(

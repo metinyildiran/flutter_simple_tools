@@ -1,7 +1,5 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:simple_tools/theme/custom_colors.dart';
 import 'package:simple_tools/util/utils.dart';
 import 'package:simple_tools/widgets/status_button.dart';
 import '../util/preference_utils.dart';
@@ -49,7 +47,6 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColors.darkGrey,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +61,6 @@ class _MainPageState extends State<MainPage> {
                 Stream _stream = await Utils.runConsoleCommand(
                     "adb connect $ipAddress:5555");
                 _stream.listen((result) async {
-                  print(result);
                   if (result.contains("connected to")) {
                     setState(() {
                       connectButtonStatus = ButtonStatus.CONNECTED;

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:simple_tools/theme/custom_colors.dart';
 import 'package:simple_tools/widgets/my_text_field.dart';
 import 'package:simple_tools/widgets/status_button.dart';
 
@@ -18,7 +17,6 @@ class _TextToolsState extends State<TextTools> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: CustomColors.darkGrey,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(40.0),
         child: AppBar(
